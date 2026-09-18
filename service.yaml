@@ -1,0 +1,32 @@
+schema: 1
+name: live-dns
+display_name: Live Public DNS
+description: >-
+  Resolve current public DNS records for a domain using an Google Public DNS
+  HTTPS resolver. Supports A, AAAA, MX, TXT, NS, CNAME, SOA and CAA.
+maintainer:
+  github: Bystander2
+status: testnet
+base_url: https://kite-live-dns.sakurasoga7.workers.dev
+network: eip155:2368
+pay_to: "0xa5d1f687B741af9b2B7c2B0D77757C6a0De69055"
+upstream:
+  name: Google Public DNS
+  url: https://developers.google.com/speed/public-dns/docs/doh/json
+  requires_api_key: false
+source: custom
+endpoints:
+  - method: GET
+    path: /v1/dns
+    summary: Query current public DNS records for one domain and record type.
+    price_usd: "0.01"
+    example_request:
+      query:
+        name: example.com
+        type: A
+    pitfalls:
+      - "A public paid 2xx call was verified on Kite testnet on 2026-09-18."
+      - "No records or nonexistent domain returns 404 without settlement."
+      - "Public resolver results may be cached; this is not an authoritative DNS or DNSSEC verification service."
+categories: [web, data]
+tags: [dns, domains, infrastructure]

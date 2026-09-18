@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "kite-live-dns",
+  "main": "workers/index.js",
+  "compatibility_date": "2026-09-17",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "enable_nodejs_http_server_modules"
+  ],
+  "workers_dev": true,
+  "build": {
+    "command": "npm run build"
+  },
+  "vars": {
+    "KITE_NETWORK": "testnet",
+    "PRICE_USD": "0.01",
+    "PAY_TO": "0xa5d1f687B741af9b2B7c2B0D77757C6a0De69055",
+    "FACILITATOR_URL": "gasless"
+  }
+}

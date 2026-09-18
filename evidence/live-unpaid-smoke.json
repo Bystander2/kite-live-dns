@@ -1,0 +1,48 @@
+{
+  "recorded_at": "2026-09-17T05:28:14.456Z",
+  "scope": "Live unpaid challenge + independent DNS lookup; NOT a paid end-to-end call",
+  "receiving_address": "fixture only, not the user wallet",
+  "http_status": 402,
+  "challenge": {
+    "x402Version": 2,
+    "error": "Payment required",
+    "resource": {
+      "url": "http://127.0.0.1:61011/v1/dns?name=example.com&type=A",
+      "description": "Live public DNS records for a domain",
+      "mimeType": "application/json"
+    },
+    "accepts": [
+      {
+        "scheme": "exact",
+        "network": "eip155:2368",
+        "amount": "1000000000000000",
+        "asset": "0x38129cf4CE5E183eFF248F42A7D345Bb1B47621A",
+        "payTo": "0x1111111111111111111111111111111111111111",
+        "maxTimeoutSeconds": 60,
+        "extra": {
+          "name": "pieUSD",
+          "version": "1"
+        }
+      }
+    ]
+  },
+  "dns": {
+    "name": "example.com",
+    "type": "A",
+    "records": [
+      {
+        "name": "example.com.",
+        "type": 1,
+        "ttl": 300,
+        "data": "104.20.23.154"
+      },
+      {
+        "name": "example.com.",
+        "type": 1,
+        "ttl": 300,
+        "data": "172.66.147.243"
+      }
+    ]
+  },
+  "on_chain_payment_performed": false
+}

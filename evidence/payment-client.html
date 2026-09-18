@@ -1,0 +1,45 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Kite Live DNS payment test</title>
+<style>body{font:16px system-ui;max-width:760px;margin:48px auto;padding:0 20px}button{font-size:18px;padding:12px 20px}pre{white-space:pre-wrap;background:#f5f5f5;padding:16px;border-radius:8px}</style>
+<h1>Kite Live DNS 真实付款测试</h1>
+<p>点击后，MetaMask 会要求签署一笔 0.01 PYUSD 的 EIP-3009 授权。签名本身不消耗 KITE。</p>
+<button id="pay">连接 MetaMask 并付款</button>
+<pre id="out">等待操作</pre>
+<script>
+const endpoint='https://kite-live-dns.sakurasoga7.workers.dev/v1/dns?name=example.com&type=A';
+const out=document.querySelector('#out');
+const b64=o=>btoa(JSON.stringify(o));
+const unb64=s=>JSON.parse(atob(s));
+document.querySelector('#pay').onclick=async()=>{
+ try {
+  if(!window.ethereum) throw new Error('未检测到 MetaMask');
+  out.textContent='连接钱包…';
+  const [from]=await ethereum.request({method:'eth_requestAccounts'});
+  const chain=await ethereum.request({method:'eth_chainId'});
+  if(chain!=='0x940') throw new Error('请把 MetaMask 切换到 KiteAI Testnet (2368)');
+  const first=await fetch(endpoint);
+  if(first.status!==402) throw new Error('服务未返回 402');
+  const required=unb64(first.headers.get('payment-required'));
+  const accepted=required.accepts[0];
+  const block=await ethereum.request({method:'eth_getBlockByNumber',params:['latest',false]});
+  const now=Number(BigInt(block.timestamp));
+  const nonce='0x'+Array.from(crypto.getRandomValues(new Uint8Array(32)),x=>x.toString(16).padStart(2,'0')).join('');
+  const authorization={from,to:accepted.payTo,value:accepted.amount,validAfter:String(now-30),validBefore:String(now+30),nonce};
+  const typed={
+   types:{EIP712Domain:[{name:'name',type:'string'},{name:'version',type:'string'},{name:'chainId',type:'uint256'},{name:'verifyingContract',type:'address'}],TransferWithAuthorization:[{name:'from',type:'address'},{name:'to',type:'address'},{name:'value',type:'uint256'},{name:'validAfter',type:'uint256'},{name:'validBefore',type:'uint256'},{name:'nonce',type:'bytes32'}]},
+   primaryType:'TransferWithAuthorization',
+   domain:{name:accepted.extra.name,version:accepted.extra.version,chainId:2368,verifyingContract:accepted.asset},
+   message:authorization
+  };
+  out.textContent='请在 MetaMask 确认付款签名…';
+  const signature=await ethereum.request({method:'eth_signTypedData_v4',params:[from,JSON.stringify(typed)]});
+  const payload={x402Version:2,resource:required.resource,accepted,payload:{signature,authorization}};
+  out.textContent='签名完成，等待 facilitator 验证和上链结算…';
+  const paid=await fetch(endpoint,{headers:{'Payment-Signature':b64(payload)}});
+  const body=await paid.text();
+  const settlement=paid.headers.get('payment-response');
+  out.textContent=JSON.stringify({status:paid.status,body:JSON.parse(body),settlement:settlement?unb64(settlement):null},null,2);
+ } catch(e) { out.textContent='失败：'+(e?.message||e); }
+};
+</script>

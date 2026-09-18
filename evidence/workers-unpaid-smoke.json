@@ -1,0 +1,37 @@
+{
+  "recorded_at": "2026-09-17T11:29:04.989Z",
+  "base": "https://kite-live-dns.sakurasoga7.workers.dev",
+  "checks": [
+    "health 200",
+    "unpaid 402",
+    "Kite testnet challenge",
+    "invalid URL 400",
+    "POST 405",
+    "route alias 402",
+    "unknown route 404"
+  ],
+  "challenge": {
+    "x402Version": 2,
+    "error": "Payment required",
+    "resource": {
+      "url": "https://kite-live-dns.sakurasoga7.workers.dev/v1/dns?name=example.com&type=A",
+      "description": "Live public DNS records for a domain",
+      "mimeType": "application/json"
+    },
+    "accepts": [
+      {
+        "scheme": "exact",
+        "network": "eip155:2368",
+        "amount": "1000000000000000",
+        "asset": "0x38129cf4CE5E183eFF248F42A7D345Bb1B47621A",
+        "payTo": "0xa5d1f687B741af9b2B7c2B0D77757C6a0De69055",
+        "maxTimeoutSeconds": 60,
+        "extra": {
+          "name": "pieUSD",
+          "version": "1"
+        }
+      }
+    ]
+  },
+  "on_chain_payment_performed": false
+}

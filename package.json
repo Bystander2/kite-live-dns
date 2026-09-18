@@ -1,0 +1,31 @@
+{
+  "name": "kite-live-dns",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Live public DNS records through a Kite x402 paid endpoint",
+  "scripts": {
+    "dev": "node --watch --env-file=.env dist/index.js",
+    "start": "node dist/index.js",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "tsc -p tsconfig.test.json && node --test .test-build/test/*.test.js",
+    "cf:dev": "wrangler dev",
+    "cf:check": "wrangler deploy --dry-run",
+    "cf:deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@x402/core": "^2.25.0",
+    "@x402/evm": "^2.25.0",
+    "@x402/express": "^2.25.0",
+    "express": "^5.1.0",
+    "viem": "^2.56.6"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.3.0",
+    "esbuild-wasm": "^0.28.1",
+    "typescript": "^5.9.2",
+    "wrangler": "^4.133.0"
+  }
+}

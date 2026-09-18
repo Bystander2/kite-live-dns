@@ -1,0 +1,12 @@
+{
+  "url": "https://kite-live-dns.sakurasoga7.workers.dev",
+  "version_id": "9fb00ef8-65cc-478d-89d8-4df303a34c34",
+  "network": "eip155:2368",
+  "public_http_checks": "passed",
+  "receiving_address_matches": true,
+  "price": "0.01 PYUSD",
+  "asset": "0x8E04D099b1a8Dd20E6caD4b2Ab2B405B98242ec9",
+  "paid_call_completed": true,
+  "payment_transaction": "0xf4c684514f7e55c278be613c9ecf911ad25e7e4bf8d8f1d2a7aab58f1fd84617",
+  "manifest_status": "testnet"
+}

@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-09-18T10:12:49.200Z",
+  "request": "GET /v1/dns?name=example.com&type=A",
+  "http_status": 200,
+  "response": {
+    "name": "example.com",
+    "type": "A",
+    "records": [
+      { "data": "104.20.23.154" },
+      { "data": "172.66.147.243" }
+    ]
+  },
+  "settlement": {
+    "success": true,
+    "payer": "0xa5d1f687b741af9b2b7c2b0d77757c6a0de69055",
+    "pay_to": "0xa5d1f687B741af9b2B7c2B0D77757C6a0De69055",
+    "asset": "0x8E04D099b1a8Dd20E6caD4b2Ab2B405B98242ec9",
+    "amount": "0.01 PYUSD",
+    "network": "eip155:2368",
+    "transaction": "0xf4c684514f7e55c278be613c9ecf911ad25e7e4bf8d8f1d2a7aab58f1fd84617",
+    "receipt_status": "0x1",
+    "block_number": 22041152,
+    "gas_used": 60892
+  },
+  "note": "The payer and receiver are the same wallet, so the token balance has no net change even though the on-chain transfer succeeded."
+}
