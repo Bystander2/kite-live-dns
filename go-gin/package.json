@@ -1,0 +1,15 @@
+{
+  "name": "kite-live-dns-go-container",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "cf:check": "wrangler deploy --dry-run",
+    "cf:deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@cloudflare/containers": "^0.3.7"
+  },
+  "devDependencies": {
+    "wrangler": "^4.135.0"
+  }
+}

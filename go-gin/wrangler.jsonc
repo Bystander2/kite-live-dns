@@ -1,0 +1,29 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "kite-live-dns-go",
+  "main": "worker.ts",
+  "compatibility_date": "2026-09-21",
+  "workers_dev": true,
+  "containers": [
+    {
+      "class_name": "LiveDNSContainer",
+      "image": "./Dockerfile",
+      "instance_type": "lite",
+      "max_instances": 1
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "LIVE_DNS",
+        "class_name": "LiveDNSContainer"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["LiveDNSContainer"]
+    }
+  ]
+}

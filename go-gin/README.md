@@ -18,3 +18,15 @@ the EIP-3009 authorization in their wallet and the Kite relay submits it.
 
 Tests assert the required `verify -> upstream -> settle` order and prove that an
 invalid request or failed upstream call cannot settle.
+
+## Cloudflare Container deployment
+
+The included `worker.ts` and `wrangler.jsonc` route a Worker to the Gin image.
+Cloudflare Containers requires a Workers Paid plan, Docker for local image
+builds, and a Wrangler login with `containers:write` permission.
+
+```sh
+npm ci
+npm run cf:check
+npm run cf:deploy
+```
