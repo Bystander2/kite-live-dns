@@ -76,6 +76,15 @@ func (s Server) Router() *gin.Engine {
 		}
 		c.Next()
 	})
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"service":  "Kite Live DNS x402",
+			"runtime":  "go/gin",
+			"health":   "/healthz",
+			"endpoint": "/v1/dns?name=example.com&type=A",
+			"payment":  s.Config.Price + " PYUSD on " + network,
+		})
+	})
 	r.GET("/healthz", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"ok": true, "network": network, "price": s.Config.Price, "runtime": "go/gin"})
 	})
