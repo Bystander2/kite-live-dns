@@ -9,6 +9,11 @@ Public URL: https://kite-live-dns.sakurasoga7.workers.dev
 
 中文运行与验证记录：[验证记录.md](验证记录.md)。
 
+Two equivalent implementations are included:
+
+- TypeScript / Express 5 at the repository root; this is the deployed Cloudflare Workers version.
+- Go 1.22 / Gin in [`go-gin/`](go-gin/), with matching x402, DNS and settlement behavior.
+
 ## Run (Node.js 22)
 
 ```sh
