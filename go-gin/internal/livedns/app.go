@@ -1,4 +1,4 @@
-package main
+package livedns
 
 import (
 	"encoding/base64"
@@ -145,7 +145,7 @@ func paymentError(c *gin.Context, reason string) {
 	c.JSON(http.StatusPaymentRequired, gin.H{})
 }
 
-func defaultServer(config Config) Server {
+func DefaultServer(config Config) Server {
 	client := &http.Client{Timeout: 10 * time.Second, CheckRedirect: func(_ *http.Request, _ []*http.Request) error { return http.ErrUseLastResponse }}
 	return Server{Config: config, Resolve: googleResolver(client), Verify: realVerifier(client), Settle: realSettler(client)}
 }

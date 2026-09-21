@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    { "source": "/healthz", "destination": "/api/index?route=healthz" },
+    { "source": "/v1/dns", "destination": "/api/index?route=dns" }
+  ],
+  "functions": {
+    "api/index.go": {
+      "maxDuration": 60
+    }
+  }
+}

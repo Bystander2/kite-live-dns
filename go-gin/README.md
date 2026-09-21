@@ -19,6 +19,13 @@ the EIP-3009 authorization in their wallet and the Kite relay submits it.
 Tests assert the required `verify -> upstream -> settle` order and prove that an
 invalid request or failed upstream call cannot settle.
 
+## Free Vercel deployment
+
+Vercel's Go runtime entry point is `api/index.go`. `vercel.json` rewrites the
+public `/healthz` and `/v1/dns` paths to that function while the same Gin router
+handles the request. The public receiver and price have safe defaults and can be
+overridden with `PAY_TO` and `PRICE_USD` environment variables.
+
 ## Cloudflare Container deployment
 
 The included `worker.ts` and `wrangler.jsonc` route a Worker to the Gin image.
