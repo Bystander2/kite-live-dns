@@ -1,0 +1,28 @@
+{
+  "timestamp": "2026-09-21T13:08:30.974234853Z",
+  "deployment": "https://kite-live-dns.vercel.app",
+  "runtime": "go/gin",
+  "request": "GET /v1/dns?name=example.com&type=A",
+  "http_status": 200,
+  "response": {
+    "name": "example.com",
+    "type": "A",
+    "records": [
+      { "name": "example.com.", "type": 1, "ttl": 300, "data": "172.66.147.243" },
+      { "name": "example.com.", "type": 1, "ttl": 300, "data": "104.20.23.154" }
+    ]
+  },
+  "settlement": {
+    "success": true,
+    "payer": "0xa5d1f687b741af9b2b7c2b0d77757c6a0de69055",
+    "pay_to": "0xa5d1f687B741af9b2b7c2b0d77757C6a0De69055",
+    "asset": "0x8E04D099b1a8Dd20E6caD4b2Ab2B405B98242ec9",
+    "amount": "0.01 PYUSD",
+    "network": "eip155:2368",
+    "transaction": "0x9ea2fcea6d5a871f9c11e0004f0c6fcfd1414c8972299a50dc4bf53da01a6423",
+    "receipt_status": "0x1",
+    "block_number": 22041280,
+    "gas_used": 60892
+  },
+  "note": "The payer and receiver are the same wallet, so the token balance has no net change even though the on-chain transfer succeeded."
+}

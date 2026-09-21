@@ -21,9 +21,9 @@ invalid request or failed upstream call cannot settle.
 
 ## Free Vercel deployment
 
-Vercel's Go runtime entry point is `api/index.go`. `vercel.json` rewrites the
-public `/healthz` and `/v1/dns` paths to that function while the same Gin router
-handles the request. The public receiver and price have safe defaults and can be
+Vercel runs the Gin server from `main.go`. The production service is available
+at `https://kite-live-dns.vercel.app`; `/healthz` is free and `/v1/dns` is the
+paid endpoint. The public receiver and price have safe defaults and can be
 overridden with `PAY_TO` and `PRICE_USD` environment variables.
 
 ## Cloudflare Container deployment
