@@ -34,12 +34,13 @@ document.querySelector('#pay').onclick=async()=>{
   };
   out.textContent='请在 MetaMask 确认付款签名…';
   const signature=await ethereum.request({method:'eth_signTypedData_v4',params:[from,JSON.stringify(typed)]});
-  const payload={x402Version:2,accepted,payload:{signature,authorization}};
+  const payload={x402Version:2,resource:required.resource,accepted,payload:{signature,authorization}};
   out.textContent='签名完成，等待 facilitator 验证和上链结算…';
   const paid=await fetch(endpoint,{headers:{'Payment-Signature':b64(payload)}});
   const body=await paid.text();
   const settlement=paid.headers.get('payment-response');
-  out.textContent=JSON.stringify({status:paid.status,body:JSON.parse(body),settlement:settlement?unb64(settlement):null},null,2);
+  const nextRequired=paid.headers.get('payment-required');
+  out.textContent=JSON.stringify({status:paid.status,body:JSON.parse(body),settlement:settlement?unb64(settlement):null,paymentRequired:nextRequired?unb64(nextRequired):null},null,2);
  } catch(e) { out.textContent='失败：'+(e?.message||e); }
 };
 </script>
