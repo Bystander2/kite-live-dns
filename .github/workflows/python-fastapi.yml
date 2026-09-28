@@ -1,0 +1,25 @@
+name: Python FastAPI wrapper
+
+on:
+  push:
+    paths: ["python-fastapi/**", ".github/workflows/python-fastapi.yml"]
+  pull_request:
+    paths: ["python-fastapi/**", ".github/workflows/python-fastapi.yml"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: python-fastapi
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: python-fastapi/pyproject.toml
+      - run: pip install -e '.[dev]'
+      - run: pytest -vv
+      - run: python -m build
+
