@@ -9,4 +9,3 @@ app = create_app(
     price_usd=os.getenv("PRICE_USD", "0.001"),
     facilitator_url=os.getenv("FACILITATOR_URL", "https://facilitator.pieverse.io/v2"),
 )
-
