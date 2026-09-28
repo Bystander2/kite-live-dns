@@ -24,6 +24,7 @@ CHAINS = {
 def create_app(*, pay_to: str, upstream_url: str, network_name: str = "testnet", price_usd: str = "0.001", facilitator_url: str = "https://facilitator.pieverse.io/v2", client: httpx.AsyncClient | None = None, server: x402ResourceServer | None = None, sync_on_start: bool = True) -> FastAPI:
     if not re.fullmatch(r"0x[0-9a-fA-F]{40}", pay_to) or int(pay_to, 16) == 0:
         raise ValueError("PAY_TO must be a nonzero EVM address")
+    pay_to = pay_to.lower()
     if network_name not in CHAINS:
         raise ValueError("KITE_NETWORK must be testnet or mainnet")
     network, asset, decimals, token_name, token_version = CHAINS[network_name]
@@ -64,4 +65,3 @@ def create_app(*, pay_to: str, upstream_url: str, network_name: str = "testnet",
 def main() -> None:
     app = create_app(pay_to=os.getenv("PAY_TO", ""), upstream_url=os.getenv("UPSTREAM_URL", ""), network_name=os.getenv("KITE_NETWORK", "testnet"), price_usd=os.getenv("PRICE_USD", "0.001"), facilitator_url=os.getenv("FACILITATOR_URL", "https://facilitator.pieverse.io/v2"))
     uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", "8080")))
-

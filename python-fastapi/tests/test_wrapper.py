@@ -81,6 +81,7 @@ def test_unpaid_returns_kite_402_without_upstream():
     assert payment["network"] == "eip155:2368"
     assert payment["asset"] == "0x38129cf4CE5E183eFF248F42A7D345Bb1B47621A"
     assert payment["amount"] == "1000000000000000"
+    assert payment["payTo"] == PAY_TO.lower()
     assert calls == []
 
 
@@ -107,4 +108,3 @@ def test_health_is_free():
     assert response.status_code == 200
     assert response.json()["runtime"] == "python/fastapi"
     assert calls == []
-
