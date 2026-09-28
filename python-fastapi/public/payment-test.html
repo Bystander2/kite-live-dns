@@ -13,7 +13,9 @@ const b64=o=>btoa(JSON.stringify(o));
 const unb64=s=>JSON.parse(atob(s));
 document.querySelector('#pay').onclick=async()=>{
  try {
-  if(!window.ethereum) throw new Error('未检测到 MetaMask');
+  const providers=window.ethereum?.providers||[window.ethereum].filter(Boolean);
+  const ethereum=providers.find(p=>p.isMetaMask&&!p.isPhantom)||providers.find(p=>p.isMetaMask);
+  if(!ethereum) throw new Error('未检测到 MetaMask');
   out.textContent='连接钱包…';
   const [from]=await ethereum.request({method:'eth_requestAccounts'});
   const chain=await ethereum.request({method:'eth_chainId'});
@@ -25,7 +27,7 @@ document.querySelector('#pay').onclick=async()=>{
   const block=await ethereum.request({method:'eth_getBlockByNumber',params:['latest',false]});
   const now=Number(BigInt(block.timestamp));
   const nonce='0x'+Array.from(crypto.getRandomValues(new Uint8Array(32)),x=>x.toString(16).padStart(2,'0')).join('');
-  const authorization={from,to:accepted.payTo,value:accepted.amount,validAfter:String(now-30),validBefore:String(now+30),nonce};
+  const authorization={from,to:accepted.payTo,value:accepted.amount,validAfter:'0',validBefore:String(now+60),nonce};
   const typed={
    types:{EIP712Domain:[{name:'name',type:'string'},{name:'version',type:'string'},{name:'chainId',type:'uint256'},{name:'verifyingContract',type:'address'}],TransferWithAuthorization:[{name:'from',type:'address'},{name:'to',type:'address'},{name:'value',type:'uint256'},{name:'validAfter',type:'uint256'},{name:'validBefore',type:'uint256'},{name:'nonce',type:'bytes32'}]},
    primaryType:'TransferWithAuthorization',
