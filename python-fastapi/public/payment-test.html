@@ -6,6 +6,7 @@
 <p>MetaMask 将请求签署 0.001 pieUSD 的 EIP-3009 授权，结算网络为 KiteAI Testnet（2368）。</p>
 <button id="pay">连接 MetaMask 并付款</button>
 <pre id="out">等待操作</pre>
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.15.0/dist/ethers.min.js"></script>
 <script>
 const endpoint='/v1/resolve?name=example.com&type=A';
 const out=document.querySelector('#out');
@@ -36,8 +37,10 @@ document.querySelector('#pay').onclick=async()=>{
   };
   out.textContent='请在 MetaMask 确认付款签名…';
   const signature=await ethereum.request({method:'eth_signTypedData_v4',params:[from,JSON.stringify(typed)]});
+  const recovered=ethers.verifyTypedData(typed.domain,{TransferWithAuthorization:typed.types.TransferWithAuthorization},typed.message,signature);
+  if(recovered.toLowerCase()!==from.toLowerCase()) throw new Error(`签名账户不匹配：连接 ${from}，恢复 ${recovered}`);
   const payload={x402Version:2,resource:required.resource,accepted,payload:{signature,authorization}};
-  out.textContent='签名完成，等待 facilitator 验证和上链结算…';
+  out.textContent=`签名账户 ${from} 校验通过，等待 facilitator 验证和上链结算…`;
   const paid=await fetch(endpoint,{headers:{'Payment-Signature':b64(payload)}});
   const body=await paid.text();
   const settlement=paid.headers.get('payment-response');
