@@ -1,0 +1,43 @@
+{
+  "timestamp": "2026-09-29T02:53:25.824900Z",
+  "deployment": "https://kite-x402-fastapi.vercel.app",
+  "runtime": "python/fastapi",
+  "request": "GET /v1/resolve?name=example.com&type=A",
+  "http_status": 200,
+  "response": {
+    "Status": 0,
+    "Question": [
+      {
+        "name": "example.com.",
+        "type": 1
+      }
+    ],
+    "Answer": [
+      {
+        "name": "example.com.",
+        "type": 1,
+        "TTL": 300,
+        "data": "104.20.23.154"
+      },
+      {
+        "name": "example.com.",
+        "type": 1,
+        "TTL": 300,
+        "data": "172.66.147.243"
+      }
+    ]
+  },
+  "settlement": {
+    "success": true,
+    "payer": "0xa5d1f687b741af9b2b7c2b0d77757c6a0de69055",
+    "pay_to": "0xa5d1f687b741af9b2b7c2b0d77757c6a0de69055",
+    "asset": "0x38129cf4CE5E183eFF248F42A7D345Bb1B47621A",
+    "amount": "0.001 PIEUSD",
+    "network": "eip155:2368",
+    "transaction": "0xc4dbb82e0fea7b8eb7fd6b8dcba4a3a50010a0014f9c62e69426c3481bbbc97f",
+    "receipt_status": "0x1",
+    "block_number": 22041718,
+    "gas_used": 61450
+  },
+  "note": "The payer and receiver are the same wallet, so the token balance has no net change even though the on-chain transfer succeeded."
+}
