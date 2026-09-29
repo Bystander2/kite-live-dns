@@ -25,8 +25,7 @@ document.querySelector('#pay').onclick=async()=>{
   if(first.status!==402) throw new Error('服务未返回 402');
   const required=unb64(first.headers.get('payment-required'));
   const accepted=required.accepts[0];
-  const block=await ethereum.request({method:'eth_getBlockByNumber',params:['latest',false]});
-  const now=Number(BigInt(block.timestamp));
+  const now=Math.floor(Date.now()/1000);
   const nonce='0x'+Array.from(crypto.getRandomValues(new Uint8Array(32)),x=>x.toString(16).padStart(2,'0')).join('');
   const authorization={from,to:accepted.payTo,value:accepted.amount,validAfter:'0',validBefore:String(now+60),nonce};
   const typed={
