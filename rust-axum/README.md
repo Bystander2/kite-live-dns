@@ -64,7 +64,7 @@ Tests use local HTTP servers with a mock facilitator. They prove 402 behavior,
 paid proxy ordering, header handling, rejection, upstream failure and settlement
 failure. Mock transaction values are not real on-chain payment evidence.
 
-Published: https://crates.io/crates/kite-live-dns-axum/0.1.0
+Published: https://crates.io/crates/kite-live-dns-axum/0.1.1
 
 The Rust wrapper has no real-payment record yet. CI verifies the proxy with a mock facilitator.
 The crate name is `kite-live-dns-axum`. After authenticating to crates.io:
@@ -76,4 +76,4 @@ cargo publish
 
 Official reference: https://github.com/gokite-ai/kite-x402-services
 
-Version 0.1.1 is a local release candidate: adds service description, resource metadata, dollar-prefixed prices and facilitator rejection reasons.
+Published version 0.1.1: adds service description, resource metadata, dollar-prefixed prices and facilitator rejection reasons.
