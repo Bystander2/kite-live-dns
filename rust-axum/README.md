@@ -33,7 +33,8 @@ Same environment variables as the official Kite wrapper:
 | PAY_TO | Required receiving EVM address |
 | UPSTREAM_URL | Required HTTP base URL; `/v1/` is stripped |
 | KITE_NETWORK | `mainnet`; or `testnet` |
-| PRICE_USD | `0.001`; exact decimal, no floating-point conversion |
+| PRICE_USD | `0.001` or `$0.001`; exact decimal |
+| SERVICE_DESCRIPTION | Paid API wrapped for the Kite network |
 | UPSTREAM_AUTH_HEADER | `Authorization` |
 | UPSTREAM_AUTH_VALUE | Optional upstream credential |
 | FACILITATOR_URL | `https://facilitator.pieverse.io/v2` |
@@ -63,9 +64,10 @@ Tests use local HTTP servers with a mock facilitator. They prove 402 behavior,
 paid proxy ordering, header handling, rejection, upstream failure and settlement
 failure. Mock transaction values are not real on-chain payment evidence.
 
-This crate has not yet been published to crates.io and has no Rust-specific
-real-payment record. Publication is a remaining bounty acceptance requirement.
-After choosing an available crate name and authenticating to crates.io:
+Published: https://crates.io/crates/kite-live-dns-axum/0.1.0
+
+The Rust wrapper has no real-payment record yet. CI verifies the proxy with a mock facilitator.
+The crate name is `kite-live-dns-axum`. After authenticating to crates.io:
 
 ```sh
 cargo publish --dry-run
@@ -73,3 +75,5 @@ cargo publish
 ```
 
 Official reference: https://github.com/gokite-ai/kite-x402-services
+
+Version 0.1.1 is a local release candidate: adds service description, resource metadata, dollar-prefixed prices and facilitator rejection reasons.

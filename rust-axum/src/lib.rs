@@ -17,17 +17,28 @@ pub struct Config {
     pub upstream_url: String,
     pub network: String,
     pub price_usd: String,
+    pub service_description: String,
     pub facilitator_url: String,
     pub upstream_auth: Option<(String, String)>,
 }
 impl Config {
     pub fn from_env() -> Self {
-        let read = |key: &str, default: &str| env::var(key).unwrap_or_else(|_| default.into());
+        let read = |key: &str, default: &str| {
+            env::var(key)
+                .ok()
+                .map(|v| v.trim().to_owned())
+                .filter(|v| !v.is_empty())
+                .unwrap_or_else(|| default.into())
+        };
         Self {
             pay_to: read("PAY_TO", ""),
             upstream_url: read("UPSTREAM_URL", ""),
             network: read("KITE_NETWORK", "mainnet"),
             price_usd: read("PRICE_USD", "0.001"),
+            service_description: read(
+                "SERVICE_DESCRIPTION",
+                "Paid API wrapped for the Kite network",
+            ),
             facilitator_url: read("FACILITATOR_URL", "https://facilitator.pieverse.io/v2"),
             upstream_auth: env::var("UPSTREAM_AUTH_VALUE")
                 .ok()
@@ -45,6 +56,7 @@ struct AppState {
 }
 
 fn amount(price: &str, decimals: usize) -> Result<String, String> {
+    let price = price.trim().strip_prefix('$').unwrap_or(price.trim());
     let parts: Vec<_> = price.split('.').collect();
     if parts.len() > 2 || parts[0].is_empty() || !parts[0].bytes().all(|b| b.is_ascii_digit()) {
         return Err("PRICE_USD must be a positive decimal".into());
@@ -151,8 +163,9 @@ fn encoded(value: &Value) -> String {
 fn error(status: StatusCode, reason: &str) -> Response {
     (status, axum::Json(json!({"error":reason}))).into_response()
 }
-fn challenge(state: &AppState, reason: Option<&str>) -> Response {
-    let mut value = json!({"x402Version":2,"accepts":[state.requirements.clone()]});
+fn challenge(state: &AppState, resource: &Value, reason: Option<&str>) -> Response {
+    let mut value =
+        json!({"x402Version":2,"resource":resource,"accepts":[state.requirements.clone()]});
     if let Some(reason) = reason {
         value["error"] = json!(reason);
     }
@@ -207,8 +220,15 @@ async fn facilitator(state: &AppState, action: &str, payload: &Value) -> Result<
     response.json().await.map_err(|_| ())
 }
 async fn proxy(State(state): State<AppState>, request: Request) -> Response {
+    let host = request
+        .headers()
+        .get("host")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("localhost");
+    let scheme = request.uri().scheme_str().unwrap_or("http");
+    let resource = json!({"url":format!("{scheme}://{host}{}", request.uri().path_and_query().map(|v| v.as_str()).unwrap_or("/")), "description":state.config.service_description, "mimeType":"application/json"});
     let Some(signature) = request.headers().get("payment-signature") else {
-        return challenge(&state, None);
+        return challenge(&state, &resource, None);
     };
     let payload: Value = match signature
         .to_str()
@@ -217,20 +237,28 @@ async fn proxy(State(state): State<AppState>, request: Request) -> Response {
         .and_then(|bytes| serde_json::from_slice(&bytes).ok())
     {
         Some(v) => v,
-        None => return challenge(&state, Some("invalid_payment_payload")),
+        None => return challenge(&state, &resource, Some("invalid_payment_payload")),
     };
     if payload["x402Version"] != 2
         || payload["accepted"] != state.requirements
         || !payload["payload"].is_object()
     {
-        return challenge(&state, Some("invalid_payment_payload"));
+        return challenge(&state, &resource, Some("invalid_payment_payload"));
     }
     let verified = match facilitator(&state, "verify", &payload).await {
         Ok(v) => v,
         Err(_) => return error(StatusCode::BAD_GATEWAY, "facilitator_unavailable"),
     };
     if verified["isValid"] != true {
-        return challenge(&state, Some("payment_verification_failed"));
+        return challenge(
+            &state,
+            &resource,
+            Some(
+                verified["invalidReason"]
+                    .as_str()
+                    .unwrap_or("payment_verification_failed"),
+            ),
+        );
     }
     let suffix = request.uri().path().strip_prefix("/v1/").unwrap_or("");
     // Append to a fixed base path: a buyer cannot replace the upstream host.
@@ -280,7 +308,15 @@ async fn proxy(State(state): State<AppState>, request: Request) -> Response {
         || settled["network"] != state.requirements["network"]
         || settled["transaction"].as_str().is_none_or(|s| s.is_empty())
     {
-        return challenge(&state, Some("settlement_failed"));
+        return challenge(
+            &state,
+            &resource,
+            Some(
+                settled["errorReason"]
+                    .as_str()
+                    .unwrap_or("settlement_failed"),
+            ),
+        );
     }
     response.headers_mut().insert(
         "payment-response",

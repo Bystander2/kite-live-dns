@@ -6,7 +6,7 @@ use axum::{
     routing::{get, post},
 };
 use base64::{Engine, engine::general_purpose::STANDARD};
-use kite_x402_axum::{Config, router};
+use kite_live_dns_axum::{Config, router};
 use serde_json::{Value, json};
 use std::sync::{Arc, Mutex};
 use tower::ServiceExt;
@@ -32,11 +32,13 @@ async fn exercise(
         assert_eq!(body["x402Version"], 2);
         assert_eq!(body["paymentRequirements"]["network"], "eip155:2368");
         calls.lock().unwrap().push("verify");
-        Json(json!({"isValid":valid}))
+        Json(json!({"isValid":valid,"invalidReason":"invalid_signature"}))
     };
     let settlement = move |State(calls): State<Calls>| async move {
         calls.lock().unwrap().push("settle");
-        Json(json!({"success":settle,"network":"eip155:2368","transaction":"0xmock"}))
+        Json(
+            json!({"success":settle,"network":"eip155:2368","transaction":"0xmock","errorReason":"insufficient_funds"}),
+        )
     };
     let (facilitator, task1) = start(
         Router::new()
@@ -67,7 +69,8 @@ async fn exercise(
         pay_to: "0x1111111111111111111111111111111111111111".into(),
         upstream_url: format!("{upstream}/base"),
         network: "testnet".into(),
-        price_usd: "0.001".into(),
+        price_usd: "$0.001".into(),
+        service_description: "Example paid records".into(),
         facilitator_url: facilitator,
         upstream_auth: Some(("authorization".into(), "Bearer server-secret".into())),
     };
@@ -90,6 +93,8 @@ async fn exercise(
     )
     .unwrap();
     assert_eq!(required["accepts"][0]["amount"], "1000000000000000");
+    assert_eq!(required["resource"]["description"], "Example paid records");
+    assert_eq!(required["resource"]["mimeType"], "application/json");
     assert!(calls.lock().unwrap().is_empty());
     let response = if paid {
         let signature=STANDARD.encode(json!({"x402Version":2,"accepted":required["accepts"][0],"payload":{"signature":"mock"}}).to_string());
@@ -154,7 +159,8 @@ async fn health_is_free_and_unknown_route_is_404() {
         pay_to: "0x1111111111111111111111111111111111111111".into(),
         upstream_url: "http://localhost:1".into(),
         network: "mainnet".into(),
-        price_usd: "0.001".into(),
+        price_usd: "$0.001".into(),
+        service_description: "Example paid records".into(),
         facilitator_url: "http://localhost:2".into(),
         upstream_auth: None,
     };
