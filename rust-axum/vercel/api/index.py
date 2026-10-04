@@ -3,6 +3,7 @@ import http.client
 import os
 from pathlib import Path
 import subprocess
+import shutil
 import threading
 import time
 from http.server import BaseHTTPRequestHandler
@@ -15,7 +16,9 @@ def start_rust():
     global _process
     with _lock:
         if _process is None or _process.poll() is not None:
-            binary = ROOT / 'bin' / 'kite-live-dns-axum'
+            source = ROOT / 'bin' / 'kite-live-dns-axum'
+            binary = Path('/tmp/kite-live-dns-axum')
+            shutil.copyfile(source, binary)
             binary.chmod(0o755)
             config = dict(os.environ)
             config.update(PORT='8090')
