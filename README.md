@@ -107,3 +107,10 @@ Native macOS tooling is unavailable on this machine. Use `Dockerfile.tools` to r
 Wrangler under Linux with system CA certificates. Docker dry-run and local Workers
 HTTP smoke tests have now passed; see 验证记录.md and evidence/workers-unpaid-smoke.json.
 Cloudflare deployment and public unpaid HTTP checks passed. See evidence/deployment.json.
+
+### Rust / Axum wrapper
+
+The reusable [Rust/Axum template](rust-axum/README.md) implements `/v1/*`
+paid proxying with the official environment variables and x402 v2 facilitator
+contract. Run its local example and assertion tests with Cargo; crates.io
+publication remains pending.

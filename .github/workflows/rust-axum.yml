@@ -1,0 +1,20 @@
+name: Rust Axum wrapper
+on:
+  push:
+    paths: ['rust-axum/**', '.github/workflows/rust-axum.yml']
+  pull_request:
+    paths: ['rust-axum/**', '.github/workflows/rust-axum.yml']
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - working-directory: rust-axum
+        run: |
+          cargo fmt --check
+          cargo test --locked
+          cargo clippy --locked --all-targets -- -D warnings
+          cargo package --locked --allow-dirty

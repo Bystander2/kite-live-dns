@@ -1,0 +1,18 @@
+[package]
+name = "kite-x402-axum"
+version = "0.1.0"
+edition = "2024"
+description = "Kite x402 v2 paid reverse proxy for Axum"
+license = "MIT"
+repository = "https://github.com/Bystander2/kite-live-dns"
+readme = "README.md"
+
+[dependencies]
+axum = "0.8"
+base64 = "0.22"
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+serde_json = "1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net"] }
+
+[dev-dependencies]
+tower = { version = "0.5", features = ["util"] }
