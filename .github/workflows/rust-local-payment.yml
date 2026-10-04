@@ -1,0 +1,16 @@
+name: Rust local payment binary
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - working-directory: rust-axum
+        run: cargo build --locked --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rust-axum-macos-arm64
+          path: rust-axum/target/release/kite-live-dns-axum
+          retention-days: 3
