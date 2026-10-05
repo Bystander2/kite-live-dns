@@ -1,0 +1,343 @@
+[
+  {
+    "method": "GET",
+    "path": "/healthz",
+    "status": 200,
+    "body": {
+      "asset": "pieUSD",
+      "network": "eip155:2368",
+      "ok": true,
+      "price": "$0.001",
+      "runtime": "rust/axum"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/v1/resolve?name=example.com&type=A",
+    "status": 402,
+    "body": {
+      "accepts": [
+        {
+          "amount": "1000000000000000",
+          "asset": "0x38129cf4CE5E183eFF248F42A7D345Bb1B47621A",
+          "extra": {
+            "name": "pieUSD",
+            "version": "1"
+          },
+          "maxTimeoutSeconds": 60,
+          "network": "eip155:2368",
+          "payTo": "0xa5d1f687b741af9b2b7c2b0d77757c6a0de69055",
+          "scheme": "exact"
+        }
+      ],
+      "resource": {
+        "description": "Paid API wrapped for the Kite network",
+        "mimeType": "application/json",
+        "url": "https://kite-rust-axum.vercel.app/v1/resolve?name=example.com&type=A"
+      },
+      "x402Version": 2
+    },
+    "paymentRequired": {
+      "accepts": [
+        {
+          "amount": "1000000000000000",
+          "asset": "0x38129cf4CE5E183eFF248F42A7D345Bb1B47621A",
+          "extra": {
+            "name": "pieUSD",
+            "version": "1"
+          },
+          "maxTimeoutSeconds": 60,
+          "network": "eip155:2368",
+          "payTo": "0xa5d1f687b741af9b2b7c2b0d77757c6a0de69055",
+          "scheme": "exact"
+        }
+      ],
+      "resource": {
+        "description": "Paid API wrapped for the Kite network",
+        "mimeType": "application/json",
+        "url": "https://kite-rust-axum.vercel.app/v1/resolve?name=example.com&type=A"
+      },
+      "x402Version": 2
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/v1/resolve",
+    "status": 402,
+    "body": {
+      "accepts": [
+        {
+          "amount": "1000000000000000",
+          "asset": "0x38129cf4CE5E183eFF248F42A7D345Bb1B47621A",
+          "extra": {
+            "name": "pieUSD",
+            "version": "1"
+          },
+          "maxTimeoutSeconds": 60,
+          "network": "eip155:2368",
+          "payTo": "0xa5d1f687b741af9b2b7c2b0d77757c6a0de69055",
+          "scheme": "exact"
+        }
+      ],
+      "resource": {
+        "description": "Paid API wrapped for the Kite network",
+        "mimeType": "application/json",
+        "url": "https://kite-rust-axum.vercel.app/v1/resolve"
+      },
+      "x402Version": 2
+    },
+    "paymentRequired": {
+      "accepts": [
+        {
+          "amount": "1000000000000000",
+          "asset": "0x38129cf4CE5E183eFF248F42A7D345Bb1B47621A",
+          "extra": {
+            "name": "pieUSD",
+            "version": "1"
+          },
+          "maxTimeoutSeconds": 60,
+          "network": "eip155:2368",
+          "payTo": "0xa5d1f687b741af9b2b7c2b0d77757c6a0de69055",
+          "scheme": "exact"
+        }
+      ],
+      "resource": {
+        "description": "Paid API wrapped for the Kite network",
+        "mimeType": "application/json",
+        "url": "https://kite-rust-axum.vercel.app/v1/resolve"
+      },
+      "x402Version": 2
+    }
+  },
+  {
+    "method": "PUT",
+    "path": "/v1/resolve",
+    "status": 402,
+    "body": {
+      "accepts": [
+        {
+          "amount": "1000000000000000",
+          "asset": "0x38129cf4CE5E183eFF248F42A7D345Bb1B47621A",
+          "extra": {
+            "name": "pieUSD",
+            "version": "1"
+          },
+          "maxTimeoutSeconds": 60,
+          "network": "eip155:2368",
+          "payTo": "0xa5d1f687b741af9b2b7c2b0d77757c6a0de69055",
+          "scheme": "exact"
+        }
+      ],
+      "resource": {
+        "description": "Paid API wrapped for the Kite network",
+        "mimeType": "application/json",
+        "url": "https://kite-rust-axum.vercel.app/v1/resolve"
+      },
+      "x402Version": 2
+    },
+    "paymentRequired": {
+      "accepts": [
+        {
+          "amount": "1000000000000000",
+          "asset": "0x38129cf4CE5E183eFF248F42A7D345Bb1B47621A",
+          "extra": {
+            "name": "pieUSD",
+            "version": "1"
+          },
+          "maxTimeoutSeconds": 60,
+          "network": "eip155:2368",
+          "payTo": "0xa5d1f687b741af9b2b7c2b0d77757c6a0de69055",
+          "scheme": "exact"
+        }
+      ],
+      "resource": {
+        "description": "Paid API wrapped for the Kite network",
+        "mimeType": "application/json",
+        "url": "https://kite-rust-axum.vercel.app/v1/resolve"
+      },
+      "x402Version": 2
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "/v1/resolve",
+    "status": 402,
+    "body": {
+      "accepts": [
+        {
+          "amount": "1000000000000000",
+          "asset": "0x38129cf4CE5E183eFF248F42A7D345Bb1B47621A",
+          "extra": {
+            "name": "pieUSD",
+            "version": "1"
+          },
+          "maxTimeoutSeconds": 60,
+          "network": "eip155:2368",
+          "payTo": "0xa5d1f687b741af9b2b7c2b0d77757c6a0de69055",
+          "scheme": "exact"
+        }
+      ],
+      "resource": {
+        "description": "Paid API wrapped for the Kite network",
+        "mimeType": "application/json",
+        "url": "https://kite-rust-axum.vercel.app/v1/resolve"
+      },
+      "x402Version": 2
+    },
+    "paymentRequired": {
+      "accepts": [
+        {
+          "amount": "1000000000000000",
+          "asset": "0x38129cf4CE5E183eFF248F42A7D345Bb1B47621A",
+          "extra": {
+            "name": "pieUSD",
+            "version": "1"
+          },
+          "maxTimeoutSeconds": 60,
+          "network": "eip155:2368",
+          "payTo": "0xa5d1f687b741af9b2b7c2b0d77757c6a0de69055",
+          "scheme": "exact"
+        }
+      ],
+      "resource": {
+        "description": "Paid API wrapped for the Kite network",
+        "mimeType": "application/json",
+        "url": "https://kite-rust-axum.vercel.app/v1/resolve"
+      },
+      "x402Version": 2
+    }
+  },
+  {
+    "method": "DELETE",
+    "path": "/v1/resolve",
+    "status": 402,
+    "body": {
+      "accepts": [
+        {
+          "amount": "1000000000000000",
+          "asset": "0x38129cf4CE5E183eFF248F42A7D345Bb1B47621A",
+          "extra": {
+            "name": "pieUSD",
+            "version": "1"
+          },
+          "maxTimeoutSeconds": 60,
+          "network": "eip155:2368",
+          "payTo": "0xa5d1f687b741af9b2b7c2b0d77757c6a0de69055",
+          "scheme": "exact"
+        }
+      ],
+      "resource": {
+        "description": "Paid API wrapped for the Kite network",
+        "mimeType": "application/json",
+        "url": "https://kite-rust-axum.vercel.app/v1/resolve"
+      },
+      "x402Version": 2
+    },
+    "paymentRequired": {
+      "accepts": [
+        {
+          "amount": "1000000000000000",
+          "asset": "0x38129cf4CE5E183eFF248F42A7D345Bb1B47621A",
+          "extra": {
+            "name": "pieUSD",
+            "version": "1"
+          },
+          "maxTimeoutSeconds": 60,
+          "network": "eip155:2368",
+          "payTo": "0xa5d1f687b741af9b2b7c2b0d77757c6a0de69055",
+          "scheme": "exact"
+        }
+      ],
+      "resource": {
+        "description": "Paid API wrapped for the Kite network",
+        "mimeType": "application/json",
+        "url": "https://kite-rust-axum.vercel.app/v1/resolve"
+      },
+      "x402Version": 2
+    }
+  },
+  {
+    "method": "HEAD",
+    "path": "/v1/resolve",
+    "status": 402,
+    "body": null,
+    "paymentRequired": {
+      "accepts": [
+        {
+          "amount": "1000000000000000",
+          "asset": "0x38129cf4CE5E183eFF248F42A7D345Bb1B47621A",
+          "extra": {
+            "name": "pieUSD",
+            "version": "1"
+          },
+          "maxTimeoutSeconds": 60,
+          "network": "eip155:2368",
+          "payTo": "0xa5d1f687b741af9b2b7c2b0d77757c6a0de69055",
+          "scheme": "exact"
+        }
+      ],
+      "resource": {
+        "description": "Paid API wrapped for the Kite network",
+        "mimeType": "application/json",
+        "url": "https://kite-rust-axum.vercel.app/v1/resolve"
+      },
+      "x402Version": 2
+    }
+  },
+  {
+    "method": "OPTIONS",
+    "path": "/v1/resolve",
+    "status": 402,
+    "body": {
+      "accepts": [
+        {
+          "amount": "1000000000000000",
+          "asset": "0x38129cf4CE5E183eFF248F42A7D345Bb1B47621A",
+          "extra": {
+            "name": "pieUSD",
+            "version": "1"
+          },
+          "maxTimeoutSeconds": 60,
+          "network": "eip155:2368",
+          "payTo": "0xa5d1f687b741af9b2b7c2b0d77757c6a0de69055",
+          "scheme": "exact"
+        }
+      ],
+      "resource": {
+        "description": "Paid API wrapped for the Kite network",
+        "mimeType": "application/json",
+        "url": "https://kite-rust-axum.vercel.app/v1/resolve"
+      },
+      "x402Version": 2
+    },
+    "paymentRequired": {
+      "accepts": [
+        {
+          "amount": "1000000000000000",
+          "asset": "0x38129cf4CE5E183eFF248F42A7D345Bb1B47621A",
+          "extra": {
+            "name": "pieUSD",
+            "version": "1"
+          },
+          "maxTimeoutSeconds": 60,
+          "network": "eip155:2368",
+          "payTo": "0xa5d1f687b741af9b2b7c2b0d77757c6a0de69055",
+          "scheme": "exact"
+        }
+      ],
+      "resource": {
+        "description": "Paid API wrapped for the Kite network",
+        "mimeType": "application/json",
+        "url": "https://kite-rust-axum.vercel.app/v1/resolve"
+      },
+      "x402Version": 2
+    }
+  },
+  {
+    "method": "TRACE",
+    "path": "/v1/resolve",
+    "status": 405,
+    "platformBlocked": true,
+    "body": "Method not allowed\n\nNOT_ALLOWED\n\nsfo1::w8xf8-1791159665494-0a9416006061\n"
+  }
+]
