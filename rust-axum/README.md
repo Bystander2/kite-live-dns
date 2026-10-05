@@ -66,7 +66,25 @@ failure. Mock transaction values are not real on-chain payment evidence.
 
 Published: https://crates.io/crates/kite-live-dns-axum/0.1.1
 
-The Rust wrapper has no real-payment record yet. CI verifies the proxy with a mock facilitator.
+## Deployment and real payment verification
+
+Deployed example: https://kite-rust-axum.vercel.app/ . Vercel uses a Python
+bridge to start the Rust binary; Rust/Axum handles verification, proxying and settlement.
+
+On 2026-10-04, `/healthz` returned 200 and an unpaid DNS request returned 402.
+A MetaMask-signed payment of 0.001 pieUSD on Kite Testnet (`eip155:2368`)
+returned HTTP 200 with DNS data and `settlement.success=true`. The independently
+queried transaction receipt had `status=0x1`.
+
+Transaction: `0x24ee2b6c2ec43915d68531abab399b4c454a8a1df9006027c80d531172f92391`.
+The payer and recipient were the same address, so the token balance had no net
+change. This verifies a real testnet transfer; mainnet payment remains untested.
+
+See [verification notes](验证记录.md) and the sanitized
+[payment receipt](evidence/payment-2026-10-04.json). CI additionally tests failure
+paths using a mock facilitator; those tests are separate from the real payment evidence.
+
+## Publishing
 The crate name is `kite-live-dns-axum`. After authenticating to crates.io:
 
 ```sh
