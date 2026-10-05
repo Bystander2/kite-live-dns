@@ -108,3 +108,8 @@ Vercel blocks TRACE at its edge with HTTP 405. The Axum router supports TRACE
 (as covered by CI); use another host if that method is required.
 
 Latest published package: https://crates.io/crates/kite-live-dns-axum/0.1.2 .
+
+Version 0.1.2 was also paid successfully on Kite Testnet on 2026-10-05 (Beijing):
+HTTP 200, successful settlement and independent receipt status 0x1. See
+[0.1.2 real payment evidence](evidence/payment-0.1.2-2026-10-05.json).
+The temporary publishing token has been revoked.

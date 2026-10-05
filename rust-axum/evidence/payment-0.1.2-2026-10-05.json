@@ -1,0 +1,64 @@
+{
+  "dateBeijing": "2026-10-05",
+  "version": "0.1.2",
+  "sourceCommit": "167cbbe",
+  "deploymentBinaryCommit": "2eda5e1",
+  "deployment": "https://kite-rust-axum.vercel.app/",
+  "httpStatus": 200,
+  "dnsStatus": 0,
+  "settlement": {
+    "success": true,
+    "network": "eip155:2368",
+    "payer": "0xa5d1f687b741af9b2b7c2b0d77757c6a0de69055",
+    "transaction": "0xfe6c6346815002b7bc57e4a9d0e02b66f8c7c291ce9bc37895c83ba5254ddff2"
+  },
+  "amount": "0.001 pieUSD",
+  "receipt": {
+    "blockHash": "0x346b6cb63b932900511b4d2ee20f2216674baa5337afe12aa92155b2274c535a",
+    "blockNumber": "0x1505556",
+    "contractAddress": null,
+    "cumulativeGasUsed": "0xf022",
+    "effectiveGasPrice": "0x2541b2640",
+    "from": "0x12343e649e6b2b2b77649dfab88f103c02f3c78b",
+    "gasUsed": "0xf022",
+    "logs": [
+      {
+        "address": "0x38129cf4ce5e183eff248f42a7d345bb1b47621a",
+        "topics": [
+          "0x98de503528ee59b575ef0c0a2576a82497bfc029a5685b209e9ec333479b10a5",
+          "0x000000000000000000000000a5d1f687b741af9b2b7c2b0d77757c6a0de69055",
+          "0x9c12152711c5bb25f05b345d6f4b3cf6b262a2f80c6e12399fe4022fe406280b"
+        ],
+        "data": "0x",
+        "blockNumber": "0x1505556",
+        "transactionHash": "0xfe6c6346815002b7bc57e4a9d0e02b66f8c7c291ce9bc37895c83ba5254ddff2",
+        "transactionIndex": "0x0",
+        "blockHash": "0x346b6cb63b932900511b4d2ee20f2216674baa5337afe12aa92155b2274c535a",
+        "logIndex": "0x0",
+        "removed": false
+      },
+      {
+        "address": "0x38129cf4ce5e183eff248f42a7d345bb1b47621a",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          "0x000000000000000000000000a5d1f687b741af9b2b7c2b0d77757c6a0de69055",
+          "0x000000000000000000000000a5d1f687b741af9b2b7c2b0d77757c6a0de69055"
+        ],
+        "data": "0x00000000000000000000000000000000000000000000000000038d7ea4c68000",
+        "blockNumber": "0x1505556",
+        "transactionHash": "0xfe6c6346815002b7bc57e4a9d0e02b66f8c7c291ce9bc37895c83ba5254ddff2",
+        "transactionIndex": "0x0",
+        "blockHash": "0x346b6cb63b932900511b4d2ee20f2216674baa5337afe12aa92155b2274c535a",
+        "logIndex": "0x1",
+        "removed": false
+      }
+    ],
+    "logsBloom": "0x00200000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000008000000200000000000000000000000000000080000000000000000000000000000000000000000000000000400000010000000000000000000000000000000000000000000000000000010004000000080002000000000000000000000000000000000000004000000000000000000000000000000000022000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "status": "0x1",
+    "to": "0x38129cf4ce5e183eff248f42a7d345bb1b47621a",
+    "transactionHash": "0xfe6c6346815002b7bc57e4a9d0e02b66f8c7c291ce9bc37895c83ba5254ddff2",
+    "transactionIndex": "0x0",
+    "type": "0x2"
+  },
+  "temporaryPublishingTokenRevoked": true
+}
