@@ -16,7 +16,9 @@ jobs:
                   r = urllib.request.urlopen(urllib.request.Request(base + path, method=method), timeout=30)
               except urllib.error.HTTPError as e:
                   r = e
-              body = json.loads(r.read())
+              raw = r.read().decode()
+              print(method, path, r.status, raw[:1000], flush=True)
+              body = json.loads(raw)
               result = {'method': method, 'path': path, 'status': r.status, 'body': body}
               if path == '/healthz':
                   assert r.status == 200 and body['asset'] == 'pieUSD' and body['price'] == '$0.001'
