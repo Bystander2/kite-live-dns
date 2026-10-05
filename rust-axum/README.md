@@ -2,7 +2,8 @@
 
 Reusable Rust/Axum x402 v2 reverse proxy. Every `/v1/*` request is paid;
 `/healthz` is free. The wrapper sends the payment to the facilitator for
-verification, calls the upstream, and settles only after a complete 2xx response.
+verification, calls the upstream, and settles only after a complete response with status below 400, matching the
+official Gin middleware. Redirects are returned to the buyer without being followed.
 A failed settlement withholds the successful upstream response.
 
 ## Run the local example
@@ -97,3 +98,8 @@ Official reference: https://github.com/gokite-ai/kite-x402-services
 Published version 0.1.1: adds service description, resource metadata, dollar-prefixed prices and facilitator rejection reasons.
 
 Behavior comparison and known differences: [official template comparison](官方模板对照.md).
+
+Version 0.1.2 (pending publication): aligns non-error status settlement and
+failed-settlement PAYMENT-RESPONSE headers with the official Gin SDK, adds
+health asset/price fields, and fixes HTTPS resource metadata and OPTIONS/TRACE
+in the Vercel bridge. Strict input validation and additional header filtering remain.

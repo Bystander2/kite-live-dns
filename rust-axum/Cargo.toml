@@ -1,6 +1,6 @@
 [package]
 name = "kite-live-dns-axum"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
 description = "Kite x402 v2 paid reverse proxy for Axum"
 license = "MIT"

@@ -42,6 +42,7 @@ impl Config {
             facilitator_url: read("FACILITATOR_URL", "https://facilitator.pieverse.io/v2"),
             upstream_auth: env::var("UPSTREAM_AUTH_VALUE")
                 .ok()
+                .map(|v| v.trim().to_owned())
                 .filter(|s| !s.is_empty())
                 .map(|v| (read("UPSTREAM_AUTH_HEADER", "Authorization"), v)),
         }
@@ -154,7 +155,7 @@ pub fn router(config: Config) -> Result<Router, String> {
 }
 async fn health(State(state): State<AppState>) -> impl IntoResponse {
     axum::Json(
-        json!({"ok":true,"runtime":"rust/axum","network":state.requirements["network"],"price":state.config.price_usd}),
+        json!({"ok":true,"runtime":"rust/axum","network":state.requirements["network"],"asset":if state.config.network == "testnet" {"pieUSD"} else {"USDC.e"},"price":format!("${}", state.config.price_usd.trim().trim_start_matches('$'))}),
     )
 }
 fn encoded(value: &Value) -> String {
@@ -173,6 +174,17 @@ fn challenge(state: &AppState, resource: &Value, reason: Option<&str>) -> Respon
     response.headers_mut().insert(
         "payment-required",
         HeaderValue::from_str(&encoded(&value)).unwrap(),
+    );
+    response
+}
+fn settlement_failure(state: &AppState, reason: &str, settled: Option<&Value>) -> Response {
+    let failure = json!({"success":false,"errorReason":reason,"transaction":"",
+        "network":settled.and_then(|v| v.get("network")).unwrap_or(&state.requirements["network"]),
+        "payer":settled.and_then(|v| v["payer"].as_str()).unwrap_or("")});
+    let mut response = (StatusCode::PAYMENT_REQUIRED, axum::Json(json!({}))).into_response();
+    response.headers_mut().insert(
+        "payment-response",
+        HeaderValue::from_str(&encoded(&failure)).unwrap(),
     );
     response
 }
@@ -225,6 +237,8 @@ async fn proxy(State(state): State<AppState>, request: Request) -> Response {
         .get("host")
         .and_then(|v| v.to_str().ok())
         .unwrap_or("localhost");
+    // The deployment bridge supplies an absolute URI after TLS termination.
+    // Arbitrary buyer-supplied forwarding headers are deliberately not trusted.
     let scheme = request.uri().scheme_str().unwrap_or("http");
     let resource = json!({"url":format!("{scheme}://{host}{}", request.uri().path_and_query().map(|v| v.as_str()).unwrap_or("/")), "description":state.config.service_description, "mimeType":"application/json"});
     let Some(signature) = request.headers().get("payment-signature") else {
@@ -297,25 +311,23 @@ async fn proxy(State(state): State<AppState>, request: Request) -> Response {
     let mut response = Response::new(Body::from(content));
     *response.status_mut() = status;
     *response.headers_mut() = response_headers;
-    if !status.is_success() {
+    if status.as_u16() >= 400 {
         return response;
     }
     let settled = match facilitator(&state, "settle", &payload).await {
         Ok(v) => v,
-        Err(_) => return error(StatusCode::BAD_GATEWAY, "settlement_unavailable"),
+        Err(_) => return settlement_failure(&state, "settlement_unavailable", None),
     };
     if settled["success"] != true
         || settled["network"] != state.requirements["network"]
         || settled["transaction"].as_str().is_none_or(|s| s.is_empty())
     {
-        return challenge(
+        return settlement_failure(
             &state,
-            &resource,
-            Some(
-                settled["errorReason"]
-                    .as_str()
-                    .unwrap_or("settlement_failed"),
-            ),
+            settled["errorReason"]
+                .as_str()
+                .unwrap_or("settlement_failed"),
+            Some(&settled),
         );
     }
     response.headers_mut().insert(

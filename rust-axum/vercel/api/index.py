@@ -60,7 +60,13 @@ class handler(BaseHTTPRequestHandler):
             body = self.rfile.read(length) if length else None
             headers = {k:v for k,v in self.headers.items() if k.lower() not in ('connection','transfer-encoding','content-length')}
             conn = http.client.HTTPConnection('127.0.0.1',8090,timeout=55)
-            conn.request(self.command,self.path,body=body,headers=headers)
+            # This deployment is HTTPS-only. Absolute URI preserves the public scheme
+            # without trusting a buyer-controlled X-Forwarded-Proto header.
+            host = self.headers.get('Host', '')
+            if not host or any(c in host for c in '/?#@ \r\n'):
+                self.send_error(400, 'Invalid Host')
+                return
+            conn.request(self.command,'https://' + host + self.path,body=body,headers=headers)
             upstream = conn.getresponse()
             data = upstream.read()
             self.send_response(upstream.status)
@@ -79,3 +85,6 @@ class handler(BaseHTTPRequestHandler):
     do_PUT = handle_request
     do_PATCH = handle_request
     do_DELETE = handle_request
+
+    do_OPTIONS = handle_request
+    do_TRACE = handle_request

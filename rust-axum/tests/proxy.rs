@@ -3,7 +3,7 @@ use axum::{
     body::{Body, to_bytes},
     extract::State,
     http::{Request, StatusCode},
-    routing::{get, post},
+    routing::{any, post},
 };
 use base64::{Engine, engine::general_purpose::STANDARD};
 use kite_live_dns_axum::{Config, router};
@@ -27,6 +27,15 @@ async fn exercise(
     settle: bool,
     paid: bool,
 ) -> (axum::response::Response, Vec<&'static str>) {
+    exercise_method(upstream_status, valid, settle, paid, "GET").await
+}
+async fn exercise_method(
+    upstream_status: StatusCode,
+    valid: bool,
+    settle: bool,
+    paid: bool,
+    method: &str,
+) -> (axum::response::Response, Vec<&'static str>) {
     let calls: Calls = Default::default();
     let verify = move |State(calls): State<Calls>, Json(body): Json<Value>| async move {
         assert_eq!(body["x402Version"], 2);
@@ -47,17 +56,21 @@ async fn exercise(
             .with_state(calls.clone()),
     )
     .await;
+    let expected_method = method.to_owned();
     let (upstream, task2) = start(
         Router::new()
             .route(
                 "/base/records",
-                get(
+                any(
                     move |State(calls): State<Calls>, req: Request<Body>| async move {
                         calls.lock().unwrap().push("upstream");
+                        assert_eq!(req.method().as_str(), expected_method);
                         assert_eq!(req.uri().query(), Some("type=A"));
                         assert_eq!(req.headers()["authorization"], "Bearer server-secret");
                         assert!(!req.headers().contains_key("payment-signature"));
                         assert!(!req.headers().contains_key("x-hop"));
+                        let body = to_bytes(req.into_body(), 1024).await.unwrap();
+                        assert_eq!(body.as_ref(), b"request-body");
                         (upstream_status, Json(json!({"records":["203.0.113.7"]})))
                     },
                 ),
@@ -100,11 +113,13 @@ async fn exercise(
         let signature=STANDARD.encode(json!({"x402Version":2,"accepted":required["accepts"][0],"payload":{"signature":"mock"}}).to_string());
         app.oneshot(
             Request::builder()
-                .uri("/v1/records?type=A")
+                .uri("https://paid.example/v1/records?type=A")
+                .method(method)
+                .header("host", "paid.example")
                 .header("payment-signature", signature)
                 .header("connection", "x-hop")
                 .header("x-hop", "remove-me")
-                .body(Body::empty())
+                .body(Body::from("request-body"))
                 .unwrap(),
         )
         .await
@@ -152,6 +167,20 @@ async fn failed_settlement_withholds_upstream_success() {
     let (r, c) = exercise(StatusCode::OK, true, false, true).await;
     assert_eq!(r.status(), 402);
     assert_eq!(c, vec!["verify", "upstream", "settle"]);
+    assert!(!r.headers().contains_key("payment-required"));
+    let failure: Value = serde_json::from_slice(
+        &STANDARD
+            .decode(r.headers()["payment-response"].to_str().unwrap())
+            .unwrap(),
+    )
+    .unwrap();
+    assert_eq!(failure["success"], false);
+    assert_eq!(failure["errorReason"], "insufficient_funds");
+    assert_eq!(failure["transaction"], "");
+    assert_eq!(
+        serde_json::from_slice::<Value>(&to_bytes(r.into_body(), 1024).await.unwrap()).unwrap(),
+        json!({})
+    );
 }
 #[tokio::test]
 async fn health_is_free_and_unknown_route_is_404() {
@@ -193,4 +222,100 @@ async fn health_is_free_and_unknown_route_is_404() {
     let mut bad = config;
     bad.price_usd = "0.0000001".into();
     assert!(router(bad).is_err());
+}
+
+#[tokio::test]
+async fn redirect_is_returned_and_settled_like_gin() {
+    let (r, c) = exercise(StatusCode::TEMPORARY_REDIRECT, true, true, true).await;
+    assert_eq!(r.status(), 307);
+    assert_eq!(c, vec!["verify", "upstream", "settle"]);
+    assert!(r.headers().contains_key("payment-response"));
+}
+#[tokio::test]
+async fn all_paid_methods_proxy_request_body() {
+    for method in ["POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE"] {
+        let (r, c) = exercise_method(StatusCode::OK, true, true, true, method).await;
+        assert_eq!(r.status(), 200, "{method}");
+        assert_eq!(c, vec!["verify", "upstream", "settle"], "{method}");
+    }
+}
+fn base_config() -> Config {
+    Config {
+        pay_to: "0x1111111111111111111111111111111111111111".into(),
+        upstream_url: "http://localhost:1".into(),
+        network: "testnet".into(),
+        price_usd: "0.001".into(),
+        service_description: "Test".into(),
+        facilitator_url: "http://localhost:2".into(),
+        upstream_auth: None,
+    }
+}
+#[tokio::test]
+async fn health_matches_official_asset_and_price() {
+    for (network, asset) in [("testnet", "pieUSD"), ("mainnet", "USDC.e")] {
+        let mut config = base_config();
+        config.network = network.into();
+        let r = router(config)
+            .unwrap()
+            .oneshot(
+                Request::builder()
+                    .uri("/healthz")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        let body: Value =
+            serde_json::from_slice(&to_bytes(r.into_body(), 1024).await.unwrap()).unwrap();
+        assert_eq!(body["asset"], asset);
+        assert_eq!(body["price"], "$0.001");
+        assert_eq!(body["ok"], true);
+    }
+}
+#[tokio::test]
+async fn https_resource_uses_absolute_uri_not_forwarded_header() {
+    let app = router(base_config()).unwrap();
+    for (uri, expected) in [
+        (
+            "https://paid.example/v1/a?q=1",
+            "https://paid.example/v1/a?q=1",
+        ),
+        ("/v1/a?q=1", "http://paid.example/v1/a?q=1"),
+    ] {
+        let r = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri(uri)
+                    .header("host", "paid.example")
+                    .header("x-forwarded-proto", "https")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        let body: Value = serde_json::from_slice(
+            &STANDARD
+                .decode(r.headers()["payment-required"].to_str().unwrap())
+                .unwrap(),
+        )
+        .unwrap();
+        assert_eq!(body["resource"]["url"], expected);
+    }
+}
+#[tokio::test]
+async fn malformed_signature_is_402_without_external_calls() {
+    let r = router(base_config())
+        .unwrap()
+        .oneshot(
+            Request::builder()
+                .uri("/v1/a")
+                .header("payment-signature", "not-base64")
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(r.status(), 402);
+    assert!(r.headers().contains_key("payment-required"));
 }
