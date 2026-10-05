@@ -1,0 +1,12 @@
+{
+  "version": "0.1.2",
+  "packageSha256": "247905b1025eef42530d1d4b99534d3ceb269eb33552139b20dd8ec83f46852c",
+  "sourceMatches": {
+    "src/lib.rs": true,
+    "src/main.rs": true,
+    "tests/proxy.rs": true,
+    "examples/upstream.rs": true,
+    "Cargo.lock": true
+  },
+  "ci": "https://github.com/Bystander2/kite-live-dns/actions/runs/37246648998"
+}
