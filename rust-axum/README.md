@@ -103,3 +103,6 @@ Version 0.1.2 (pending publication): aligns non-error status settlement and
 failed-settlement PAYMENT-RESPONSE headers with the official Gin SDK, adds
 health asset/price fields, and fixes HTTPS resource metadata and OPTIONS/TRACE
 in the Vercel bridge. Strict input validation and additional header filtering remain.
+
+Vercel blocks TRACE at its edge with HTTP 405. The Axum router supports TRACE
+(as covered by CI); use another host if that method is required.

@@ -11,14 +11,18 @@ jobs:
           import urllib.request, urllib.error, json, base64
           results = []
           base = 'https://kite-rust-axum.vercel.app'
-          for method, path in [('GET', '/healthz'), ('GET', '/v1/resolve?name=example.com&type=A'), ('OPTIONS', '/v1/resolve'), ('TRACE', '/v1/resolve')]:
+          for method, path in [('GET', '/healthz'), ('GET', '/v1/resolve?name=example.com&type=A'), ('POST', '/v1/resolve'), ('PUT', '/v1/resolve'), ('PATCH', '/v1/resolve'), ('DELETE', '/v1/resolve'), ('HEAD', '/v1/resolve'), ('OPTIONS', '/v1/resolve'), ('TRACE', '/v1/resolve')]:
               try:
                   r = urllib.request.urlopen(urllib.request.Request(base + path, method=method), timeout=30)
               except urllib.error.HTTPError as e:
                   r = e
               raw = r.read().decode()
               print(method, path, r.status, raw[:1000], flush=True)
-              body = json.loads(raw)
+              if method == 'TRACE':
+                  assert r.status == 405 and 'NOT_ALLOWED' in raw
+                  results.append({'method': method, 'path': path, 'status': r.status, 'platformBlocked': True, 'body': raw})
+                  continue
+              body = json.loads(raw) if raw else None
               result = {'method': method, 'path': path, 'status': r.status, 'body': body}
               if path == '/healthz':
                   assert r.status == 200 and body['asset'] == 'pieUSD' and body['price'] == '$0.001'
