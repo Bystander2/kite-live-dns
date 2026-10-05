@@ -1,0 +1,38 @@
+name: Rust deployment smoke
+on:
+  workflow_dispatch:
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify production health and unpaid method challenges
+        run: |
+          python3 - <<'PYTHON'
+          import urllib.request, urllib.error, json, base64
+          results = []
+          base = 'https://kite-rust-axum.vercel.app'
+          for method, path in [('GET', '/healthz'), ('GET', '/v1/resolve?name=example.com&type=A'), ('OPTIONS', '/v1/resolve'), ('TRACE', '/v1/resolve')]:
+              try:
+                  r = urllib.request.urlopen(urllib.request.Request(base + path, method=method), timeout=30)
+              except urllib.error.HTTPError as e:
+                  r = e
+              body = json.loads(r.read())
+              result = {'method': method, 'path': path, 'status': r.status, 'body': body}
+              if path == '/healthz':
+                  assert r.status == 200 and body['asset'] == 'pieUSD' and body['price'] == '$0.001'
+              else:
+                  assert r.status == 402
+                  required = json.loads(base64.b64decode(r.headers['payment-required']))
+                  assert required['resource']['url'] == base + path
+                  assert required['accepts'][0]['network'] == 'eip155:2368'
+                  result['paymentRequired'] = required
+              results.append(result)
+          with open('deployment-smoke.json', 'w') as f:
+              json.dump(results, f, indent=2)
+          print(json.dumps(results, indent=2))
+          PYTHON
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rust-deployment-smoke
+          path: deployment-smoke.json
+          retention-days: 7
