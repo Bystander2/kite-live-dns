@@ -95,3 +95,5 @@ cargo publish
 Official reference: https://github.com/gokite-ai/kite-x402-services
 
 Published version 0.1.1: adds service description, resource metadata, dollar-prefixed prices and facilitator rejection reasons.
+
+Behavior comparison and known differences: [official template comparison](官方模板对照.md).
